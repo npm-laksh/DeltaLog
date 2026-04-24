@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "attendance")
 @Data
 @NoArgsConstructor
 public class Attendance {
@@ -19,6 +20,7 @@ public class Attendance {
     private LocalDateTime checkOutTime;
     private String Status;
 
+    @Column(name = "attendance_status")
     @Enumerated(EnumType.STRING)
     private AttendanceStatus status;
 
