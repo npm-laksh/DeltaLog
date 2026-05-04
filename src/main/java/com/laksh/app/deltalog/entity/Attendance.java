@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     private LocalDateTime checkInTime;
     private LocalDateTime checkOutTime;
@@ -27,5 +27,4 @@ public class Attendance {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
 }
