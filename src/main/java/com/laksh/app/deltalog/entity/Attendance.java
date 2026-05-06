@@ -18,7 +18,7 @@ public class Attendance {
 
     private LocalDateTime checkInTime;
     private LocalDateTime checkOutTime;
-    private String Status;
+    private int totalWorkMin;
 
     @Column(name = "attendance_status")
     @Enumerated(EnumType.STRING)
@@ -27,4 +27,7 @@ public class Attendance {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    private int overtime;
+    private int undertime;
 }

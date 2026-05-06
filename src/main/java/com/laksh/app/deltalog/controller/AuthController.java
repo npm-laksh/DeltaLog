@@ -2,7 +2,7 @@ package com.laksh.app.deltalog.controller;
 
 import com.laksh.app.deltalog.dto.request.LoginRequestDTO;
 import com.laksh.app.deltalog.dto.request.RegisterRequestDTO;
-import com.laksh.app.deltalog.dto.response.DeleteUserRequestDTO;
+import com.laksh.app.deltalog.dto.request.DeleteUserRequestDTO;
 import com.laksh.app.deltalog.dto.response.DeleteUserResponseDTO;
 import com.laksh.app.deltalog.dto.response.LoginResponseDTO;
 import com.laksh.app.deltalog.dto.response.RegisterResponseDTO;
@@ -29,12 +29,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO request) {
         LoginResponseDTO response = authService.login(request);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/delete-user")
+    @DeleteMapping("/delete-user")
     public ResponseEntity<DeleteUserResponseDTO> delete(@RequestBody DeleteUserRequestDTO request) {
         DeleteUserResponseDTO response = authService.deleteUser(request);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

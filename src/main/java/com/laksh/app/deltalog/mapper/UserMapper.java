@@ -1,4 +1,4 @@
-package com.laksh.app.deltalog.dto.mapper;
+package com.laksh.app.deltalog.mapper;
 
 import com.laksh.app.deltalog.dto.request.RegisterRequestDTO;
 import com.laksh.app.deltalog.dto.response.RegisterResponseDTO;
