@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.laksh.app</groupId>
-    <artifactId>DeltaLog</artifactId>
+    <artifactId>backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>DeltaLog</name>
     <description>DeltaLog</description>
