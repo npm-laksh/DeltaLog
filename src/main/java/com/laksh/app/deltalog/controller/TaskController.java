@@ -31,7 +31,17 @@ public class TaskController {
     }
 
     // update task
-
+    @PutMapping("/update/{taskId}")
+    public ResponseEntity<TaskResponseDTO> updateTask(@PathVariable Integer taskId, @RequestBody TaskRequestDTO request) {
+        TaskResponseDTO response = taskService.updateTask(taskId, request);
+        return ResponseEntity.ok(response);
+    }
 
     // delete task
+    @DeleteMapping("/delete/{taskId}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Integer taskId) {
+        taskService.deleteTask(taskId);
+        // not sending body for delete
+        return ResponseEntity.noContent().build();
+    }
 }
