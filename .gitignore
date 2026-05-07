@@ -1,0 +1,18 @@
+# IDE files
+.idea/
+.vscode/
+
+# Mac system files
+.DS_Store
+
+# Backend (Spring Boot)
+backend/target/
+backend/.mvn/
+
+# Frontend (React)
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# Logs
+*.log
