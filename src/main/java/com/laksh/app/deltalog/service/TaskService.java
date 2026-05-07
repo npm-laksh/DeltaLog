@@ -15,5 +15,7 @@ public interface TaskService {
 
     // update task
     TaskResponseDTO updateTask(Integer taskId, TaskRequestDTO request);
-    // delete task
+
+    // delete tas
+    void deleteTask(Integer taskId);
 }

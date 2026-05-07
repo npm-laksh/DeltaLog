@@ -32,6 +32,7 @@ public class TaskServiceImpl implements TaskService {
     private final AttendanceRepo attendanceRepo;
     private final TaskRepo taskRepo;
 
+    // 1. create task
     @Override
     @Transactional
     public TaskResponseDTO createTask(TaskRequestDTO request) {
@@ -59,6 +60,7 @@ public class TaskServiceImpl implements TaskService {
         return taskMapper.toTaskResponseDTO(savedTask);
     }
 
+    // 2. getTaskByAttendance to view tasks history
     @Override
     public List<TaskResponseDTO> getTaskByAttendance(Integer attendanceId) {
         return taskRepo.findByAttendanceId(attendanceId)
@@ -71,6 +73,7 @@ public class TaskServiceImpl implements TaskService {
                 .collect(Collectors.toList());
     }
 
+    // 3. update task
     @Override
     @Transactional
     public TaskResponseDTO updateTask(Integer taskId, TaskRequestDTO request) {
@@ -86,6 +89,10 @@ public class TaskServiceImpl implements TaskService {
             throw new AttendanceSessionClosed("Cannot update task. Session already Checked Out");
         }
 
+//        if (!taskToBeUpdated.getUser().getId().equals(request.userId())) {
+//            throw new RuntimeException("Unauthorized: You cannot edit someone else's task!");
+//        }
+
         taskToBeUpdated.setTitle(request.title());
         taskToBeUpdated.setDescription(request.description());
         taskToBeUpdated.setDurationMins(request.durationMinutes());
@@ -96,5 +103,22 @@ public class TaskServiceImpl implements TaskService {
         return taskMapper.toTaskResponseDTO(updatedTask);
     }
 
+    // 4. delete task
+    @Override
+    @Transactional
+    public void deleteTask(Integer taskId) {
+
+        // find the existing task
+        Task taskToBeDeleted = taskRepo.findById(taskId)
+                .orElseThrow(() -> new InvalidTaskException("Task not found"));
+
+        // prevent deletion if session is already completed
+        if(taskToBeDeleted.getAttendance().getStatus() != AttendanceStatus.ACTIVE) {
+            throw new InvalidActiveSession("Cannot delete. Attendance session already closed!");
+        }
+
+        // delete task
+        taskRepo.delete(taskToBeDeleted);
+    }
 
 }
