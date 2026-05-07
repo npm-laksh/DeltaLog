@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "tasks")
 @Data
@@ -13,10 +15,32 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String description;
-    private Integer durationMins;
+    @Column(nullable = false)
+    private String title;
 
-    @ManyToOne
-    @JoinColumn(name = "attendance_id")
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @Column(name = "duration_mins")
+    private int durationMins;
+
+//    @Column(name = "created_at")
+//    private LocalDateTime createdAt;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "attendance_id", nullable = false)
     private Attendance attendance;
+
+    // run this method first before INSERT SQL to db
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 }
