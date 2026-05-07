@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="6678d762-8f28-4b57-a598-32f63273ef81" name="Changes" comment="- added application.properties in git ignore for now&#10;- to be updated once using docker&#10;- added specific column &amp; table name">
+      <change beforePath="$PROJECT_DIR$/backend/frontend/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/frontend/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/frontend/eslint.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/frontend/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/frontend/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/frontend/public/favicon.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/frontend/public/icons.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/frontend/src/App.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/frontend/src/App.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/frontend/src/assets/hero.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/frontend/src/assets/react.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/frontend/src/assets/vite.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/frontend/src/index.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/frontend/src/main.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/frontend/vite.config.js" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Record" />
+        <option value="Interface" />
+        <option value="Class" />
+        <option value="Exception" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/backend" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;laksh-seeruttun&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/laksh-seeruttun/DeltaLog.git&quot;,
+    &quot;accountId&quot;: &quot;1a6f5f07-79bc-4e5b-a8c1-bdc8e4e5335e&quot;
+  }
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3CkLlbBxpIpNvdgaSZ2bXpwjI71" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.DeltaLogApplication.executor&quot;: &quot;Run&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/lakshseeruttun/Developer/DeltaLog&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.tabs&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.laksh.app.deltalog.exception" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="DeltaLogApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.laksh.app.deltalog.DeltaLogApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.laksh.app.deltalog.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.DeltaLogApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="6678d762-8f28-4b57-a598-32f63273ef81" name="Changes" comment="" />
+      <created>1776924774279</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1776924774279</updated>
+    </task>
+    <task id="LOCAL-00001" summary="- Set up project structure MVN &amp; Entity models&#10;- Added Status Enums(Attendance Status)">
+      <option name="closed" value="true" />
+      <created>1776938845059</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1776938845059</updated>
+    </task>
+    <task id="LOCAL-00002" summary="- added application.properties in git ignore for now&#10;- to be updated once using docker&#10;- added specific column &amp; table name">
+      <option name="closed" value="true" />
+      <created>1777010868391</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1777010868391</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="- Set up project structure MVN &amp; Entity models&#10;- Added Status Enums(Attendance Status)" />
+    <MESSAGE value="- added application.properties in git ignore for now&#10;- to be updated once using docker&#10;- added specific column &amp; table name" />
+    <option name="LAST_COMMIT_MESSAGE" value="- added application.properties in git ignore for now&#10;- to be updated once using docker&#10;- added specific column &amp; table name" />
+  </component>
+</project>
