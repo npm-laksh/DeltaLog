@@ -1,5 +1,5 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
 import LoginPage from "../pages/LoginPage"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
 
 export default function AppRouter() {
   return (

@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../components/ui/card"
 import { Input } from "../components/ui/input"
 import { Button } from "../components/ui/button"
+import { loginApi } from "../services/auth"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -14,7 +15,7 @@ export default function LoginPage() {
 
   async function handleLogin() {
   try {
-    const data = await login(email, password)
+    const data = await loginApi(email, password)
     console.log(data)
   } catch (err) {
     console.error(err)
