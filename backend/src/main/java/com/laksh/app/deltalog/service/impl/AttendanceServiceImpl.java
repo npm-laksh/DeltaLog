@@ -89,4 +89,19 @@ public class AttendanceServiceImpl implements AttendanceService {
             attendance.setOvertime(0);
         }
     }
+
+    // Inside AttendanceServiceImpl
+    // if user did not checkout and logout, check out is done automatically
+    @Transactional
+    public void completeActiveSession(User user) {
+        attendanceRepo.findByUserAndStatus(user, AttendanceStatus.ACTIVE)
+                .ifPresent(attendance -> {
+                    attendance.setCheckOutTime(LocalDateTime.now());
+                    attendance.setStatus(AttendanceStatus.COMPLETED);
+
+                    calculateMetric(attendance);
+
+                    attendanceRepo.save(attendance);
+                });
+    }
 }
