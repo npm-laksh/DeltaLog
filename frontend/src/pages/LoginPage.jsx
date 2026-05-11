@@ -4,7 +4,6 @@ import { Input } from "../components/ui/input"
 import { Button } from "../components/ui/button"
 import { loginApi } from "../services/auth"
 import { useNavigate } from "react-router-dom"
-import ThemeToggle from "../components/common/ThemeToggle"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
