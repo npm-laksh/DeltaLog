@@ -7,8 +7,12 @@ import com.laksh.app.deltalog.dto.response.DeleteUserResponseDTO;
 import com.laksh.app.deltalog.dto.response.LoginResponseDTO;
 import com.laksh.app.deltalog.dto.response.RegisterResponseDTO;
 import com.laksh.app.deltalog.entity.User;
+import com.laksh.app.deltalog.enums.AttendanceStatus;
+import com.laksh.app.deltalog.exception.UserNotFoundException;
 import com.laksh.app.deltalog.mapper.UserMapper;
+import com.laksh.app.deltalog.repository.AttendanceRepo;
 import com.laksh.app.deltalog.repository.UserRepo;
+import com.laksh.app.deltalog.service.AttendanceService;
 import com.laksh.app.deltalog.service.AuthService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +27,10 @@ import java.time.LocalDateTime;
 public class AuthServiceImpl implements AuthService {
     
     private final UserRepo userRepo;
+    private final AttendanceRepo attendanceRepo;
     private final UserMapper userMapper;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final AttendanceService attendanceService;
 
     // register logic
     public RegisterResponseDTO register(RegisterRequestDTO request) {
@@ -89,6 +95,17 @@ public class AuthServiceImpl implements AuthService {
 //                "Login Successful" // to handle status msg in dto
         );
 
+    }
+
+    public void logout(Integer userId) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        // Optional: If you want to force a check-out when they log out:
+        attendanceService.completeActiveSession(user);
+
+        // Log the event or invalidate server-side session if using one
+        System.out.println("User " + user.getEmail() + " has logged out.");
     }
 
     @Transactional

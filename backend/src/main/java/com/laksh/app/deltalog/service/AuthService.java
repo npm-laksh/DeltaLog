@@ -14,4 +14,6 @@ public interface AuthService {
     LoginResponseDTO login(LoginRequestDTO request);
 
     DeleteUserResponseDTO deleteUser(DeleteUserRequestDTO request);
+
+    void logout(Integer userId);
 }

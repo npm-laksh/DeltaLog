@@ -3,30 +3,38 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../co
 import { Input } from "../components/ui/input"
 import { Button } from "../components/ui/button"
 import { loginApi } from "../services/auth"
+import { useNavigate } from "react-router-dom"
+import ThemeToggle from "../components/common/ThemeToggle"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const navigate = useNavigate()
 
-  // const handleLogin = (e) => {
-  //   e.preventDefault()
-  //   console.log({ email, password })
-  // }
+  async function handleLogin(e) {
+    e.preventDefault();
 
-  async function handleLogin() {
-  try {
-    const data = await loginApi(email, password)
-    console.log(data)
-  } catch (err) {
-    console.error(err)
+    const request = {
+      email,
+      password
+    }
+
+    try {
+      const response = await loginApi(request)
+
+      console.log('this is res', response)
+
+      navigate("/user-dashboard")
+    } catch (err) {
+      console.error(err)
+    }
   }
-}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <Card className="w-full max-w-sm shadow-lg">
         <CardHeader className="text-center space-y-1">
-          <CardTitle className="text-2xl">Welcome back</CardTitle>
+          <CardTitle className="text-2xl">Welcome to Delta Log</CardTitle>
           <CardDescription>
             Enter your credentials to sign in
           </CardDescription>

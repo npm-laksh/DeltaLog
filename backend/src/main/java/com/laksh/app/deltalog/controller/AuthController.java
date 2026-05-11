@@ -37,4 +37,10 @@ public class AuthController {
         DeleteUserResponseDTO response = authService.deleteUser(request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PostMapping("/logout/{userId")
+    public ResponseEntity<String> logout(@PathVariable Integer userId) {
+        authService.logout(userId);
+        return ResponseEntity.ok("User logged out & work session closed successfully");
+    }
 }
