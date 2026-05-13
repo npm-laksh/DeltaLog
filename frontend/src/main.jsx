@@ -6,7 +6,11 @@ import "./index.css"
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ThemeProvider>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+    >
       <AppRouter />
     </ThemeProvider>
   </StrictMode>
