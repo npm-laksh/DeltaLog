@@ -29,7 +29,7 @@ public class MyUserDetailsService implements UserDetailsService {
                 .withUsername(user.getEmail())
                 .password(user.getPassword())
 //                .authorities("USER") // Default role
-                .authorities("ROLE_USER")
+                .authorities("ROLE_" + user.getRole().name())
                 .build();
     }
 }
