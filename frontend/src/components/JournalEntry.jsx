@@ -24,11 +24,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-import { Plus } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 
 export default function JournalEntry() {
   const [tasks, setTasks] = useState([]);
   const [open, setOpen] = useState(false);
+  const [editingTaskId, setEditingTaskId] = useState(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -52,12 +53,67 @@ export default function JournalEntry() {
     setOpen(false);
   };
 
+  const handleDeleteTask = (id) => {
+    setTasks((prev) => prev.filter((task) => task.id !== id));
+  };
+
+  // opens modal & fills form with task data
+  const handleEditClick = (task) => {
+    setEditingTaskId(task.id);
+    setFormData({
+      title: task.title,
+      description: task.description,
+      status: task.status,
+    });
+    setOpen(true);
+  };
+
+  // save task data logic
+  const handleSaveTask = () => {
+    if (!formData.title.trim()) return;
+
+    if (editingTaskId) {
+      // update logic
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === editingTaskId
+            ? { ...task, ...formData, updatedAt: new Date().toLocaleString() }
+            : task,
+        ),
+      );
+    } else {
+      // create task logic
+      const newTask = {
+        ...formData,
+        id: Date.now(),
+        createdAt: new Date().toLocaleString(),
+        updatedAt: new Date().toLocaleString(),
+      };
+      setTasks((prev) => [newTask, ...prev]);
+    }
+
+    // reset everything
+    setFormData({ title: "", description: "", status: "To Do" });
+    setEditingTaskId(null);
+    setOpen(false);
+  };
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-3xl font-bold tracking-tight">Journal Entries</h2>
 
-        <Dialog open={open} onOpenChange={setOpen}>
+        {/* <Dialog open={open} onOpenChange={setOpen}> */}
+        <Dialog
+          open={open}
+          onOpenChange={(val) => {
+            setOpen(val);
+            if (!val) {
+              setEditingTaskId(null); // clear edit state on close
+              setFormData({ title: "", description: "", status: "To Do" });
+            }
+          }}
+        >
           <DialogTrigger asChild>
             <Button className="gap-2" variant="outline">
               <Plus className="w-4 h-4" /> Add New Task
@@ -130,42 +186,58 @@ export default function JournalEntry() {
 
             <div className="flex justify-center mt-2">
               <Button
-                onClick={handleAddTask}
+                onClick={handleSaveTask}
                 variant="outline"
-                className="px-8 hover:bg-slate-50"
+                className="px-8"
               >
-                Create Task
+                {editingTaskId ? "Update Task" : "Create Task"}
               </Button>
             </div>
           </DialogContent>
         </Dialog>
       </div>
 
-      {/* Task List Section */}
-
       <div className="grid gap-4">
         {tasks.map((task) => (
-          <Card key={task.id} className="bg-background border">
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
-                <CardTitle className="text-lg text-foreground">
-                  {task.title}
-                </CardTitle>
+          <Card key={task.id} className="bg-background border shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start gap-4">
+                {/* Left Column: Title and Description */}
+                <div className="flex-1 space-y-2">
+                  <h3 className="text-xl font-bold text-foreground leading-none">
+                    {task.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {task.description}
+                  </p>
+                  <p className="text-[10px] text-slate-400 pt-2">
+                    Created: {task.createdAt}
+                  </p>
+                </div>
 
-                <span className="px-2 py-1 rounded text-xs font-semibold bg-muted text-muted-foreground border">
-                  {task.status}
-                </span>
+                <div className="flex flex-col items-end gap-3">
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-muted text-muted-foreground border whitespace-nowrap">
+                    {task.status}
+                  </span>
+
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleEditClick(task)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-slate-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                    onClick={() => handleDeleteTask(task.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-            </CardHeader>
-
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-2">
-                {task.description}
-              </p>
-
-              <p className="text-[10px] text-muted-foreground">
-                Created: {task.createdAt}
-              </p>
             </CardContent>
           </Card>
         ))}

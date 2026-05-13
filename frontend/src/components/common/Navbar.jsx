@@ -1,7 +1,9 @@
 import { Button } from "../ui/button";
+import { handleLogOut } from "../../services/logout";
 import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
+  const username = localStorage.getItem("username") || "User";
   return (
     <header className="border-b border-border bg-background/80 backdrop-blur">
       <div className="mx-auto flex h-14 items-center justify-between px-6">
@@ -14,7 +16,7 @@ export default function Navbar() {
           <Button variant="outline" className="h-9 rounded-full px-5 text-sm">
             Check In
           </Button>
-          <Button variant="outline" className="h-9 rounded-full px-5 text-sm">
+          <Button variant="outline" onClick={handleLogOut} className="h-9 rounded-full px-5 text-sm">
             Log out
           </Button>
         </div>
