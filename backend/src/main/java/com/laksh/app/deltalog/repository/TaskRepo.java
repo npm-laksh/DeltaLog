@@ -7,4 +7,7 @@ import java.util.List;
 public interface TaskRepo extends JpaRepository<Task, Integer> {
     // one attendance session can have n tasks -> store in list
     List<Task> findByAttendanceId(Integer attendanceId);
+
+    // retrieve current logged in user task
+    List<Task> findByUserEmail(String email);
 }

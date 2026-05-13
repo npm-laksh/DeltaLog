@@ -16,7 +16,11 @@ import com.laksh.app.deltalog.service.AttendanceService;
 import com.laksh.app.deltalog.service.AuthService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,8 +33,10 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepo userRepo;
     private final AttendanceRepo attendanceRepo;
     private final UserMapper userMapper;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final AttendanceService attendanceService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     // register logic
     public RegisterResponseDTO register(RegisterRequestDTO request) {
@@ -59,43 +65,72 @@ public class AuthServiceImpl implements AuthService {
     }
 
     // login logic
-    public LoginResponseDTO login(LoginRequestDTO request) {
-        // 1. find user by email
-        User user = userRepo
-                .findByEmail(request.email())
-                .orElseThrow(() -> new RuntimeException("User email not found"));
-
-        // 2. check password (bcrypt)
-        boolean matches = passwordEncoder.matches(
-                request.password(),
-                user.getPassword()
-        );
+//    public LoginResponseDTO login(LoginRequestDTO request) {
+//        // 1. find user by email
+//        User user = userRepo
+//                .findByEmail(request.email())
+//                .orElseThrow(() -> new RuntimeException("User email not found"));
 //
-        if (!matches) {
-            throw new RuntimeException("Invalid password");
-        }
-
-        // check password, uncomment above code to use bcrypt
-//        if (!request.password().equals(user.getPassword())) {
-////            String message = "Invalid password";
+//        // 2. check password (bcrypt)
+//        boolean matches = passwordEncoder.matches(
+//                request.password(),
+//                user.getPassword()
+//        );
+////
+//        if (!matches) {
 //            throw new RuntimeException("Invalid password");
 //        }
+//
+//        // check password, uncomment above code to use bcrypt
+////        if (!request.password().equals(user.getPassword())) {
+//////            String message = "Invalid password";
+////            throw new RuntimeException("Invalid password");
+////        }
+//
+//        // 3. update last login
+//        user.setLastLogin(LocalDateTime.now());
+//        userRepo.save(user);
+//
+//        // 4. return response
+//        return new LoginResponseDTO(
+//                user.getId(),
+//                user.getUsername(),
+//                user.getEmail(),
+//                user.getRole(),
+//                "Login successful"
+////                "Login Successful" // to handle status msg in dto
+//        );
+//
+//    }
 
-        // 3. update last login
-        user.setLastLogin(LocalDateTime.now());
-        userRepo.save(user);
+public LoginResponseDTO login(LoginRequestDTO request) {
+    // 1. Let Spring Security handle the "Matches" check
+    // This replaces your manual passwordEncoder.matches() logic
+    Authentication auth = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.email(), request.password())
+    );
 
-        // 4. return response
-        return new LoginResponseDTO(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getRole(),
-                "Login successful"
-//                "Login Successful" // to handle status msg in dto
-        );
+    // 2. If we reach here, authentication was successful.
+    // Fetch the user to update the lastLogin timestamp
+    User user = userRepo.findByEmail(request.email())
+            .orElseThrow(() -> new RuntimeException("User email not found"));
 
-    }
+    user.setLastLogin(LocalDateTime.now());
+    userRepo.save(user);
+
+    // 3. Generate the JWT "Passport"
+    String jwtToken = jwtService.generateToken(user.getEmail());
+
+    // 4. Return response including the token
+    return new LoginResponseDTO(
+            user.getId(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getRole(),
+            "Login successful",
+            jwtToken // Pass the generated token to your updated DTO
+    );
+}
 
     public void logout(Integer userId) {
         User user = userRepo.findById(userId)
@@ -129,5 +164,19 @@ public class AuthServiceImpl implements AuthService {
                 "User '" + request.username() + "' has been successfully removed from the system.",
                 LocalDateTime.now()
         );
+    }
+
+    @Override
+    public void logoutByEmail(String email) {
+        // 1. Find the user based on the email extracted from the SecurityContext/JWT
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+
+        // 2. Reuse your existing service to close the attendance record
+        // This likely sets the 'checkOut' time and updates status to 'ABSENT' or 'COMPLETED'
+        attendanceService.completeActiveSession(user);
+
+        // 3. Log the event
+        System.out.println("Work session closed for user: " + email + " at " + LocalDateTime.now());
     }
 }

@@ -18,6 +18,7 @@ import com.laksh.app.deltalog.repository.UserRepo;
 import com.laksh.app.deltalog.service.TaskService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -119,6 +120,12 @@ public class TaskServiceImpl implements TaskService {
 
         // delete task
         taskRepo.delete(taskToBeDeleted);
+    }
+
+    // get task for logged in user
+    public List<Task> getTasksForCurrentUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return taskRepo.findByUserEmail(email);
     }
 
 }
