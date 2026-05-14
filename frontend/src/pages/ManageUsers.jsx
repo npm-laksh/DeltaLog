@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import { Pencil, Trash2, Plus, Search } from 'lucide-react';
+import { useState } from "react";
+import { Pencil, Trash2, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Badge } from '../components/ui/badge';
-import { Avatar, AvatarFallback } from '../components/ui/avatar';
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Badge } from "../components/ui/badge";
+import { Avatar, AvatarFallback } from "../components/ui/avatar";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '../components/ui/dialog';
+} from "../components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,87 +22,87 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '../components/ui/alert-dialog';
+} from "../components/ui/alert-dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../components/ui/select';
-import Navbar from '../components/common/Navbar';
+} from "../components/ui/select";
+import Navbar from "../components/common/Navbar";
 
 const initialUsers = [
   {
-    id: '1',
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    role: 'Admin',
-    status: 'active',
-    joinedDate: '2024-01-15',
+    id: "1",
+    name: "John Doe",
+    email: "john.doe@example.com",
+    role: "Admin",
+    status: "active",
+    joinedDate: "2024-01-15",
   },
   {
-    id: '2',
-    name: 'Jane Smith',
-    email: 'jane.smith@example.com',
-    role: 'User',
-    status: 'active',
-    joinedDate: '2024-02-20',
+    id: "2",
+    name: "Jane Smith",
+    email: "jane.smith@example.com",
+    role: "User",
+    status: "active",
+    joinedDate: "2024-02-20",
   },
   {
-    id: '3',
-    name: 'Mike Johnson',
-    email: 'mike.johnson@example.com',
-    role: 'Editor',
-    status: 'inactive',
-    joinedDate: '2024-03-10',
+    id: "3",
+    name: "Mike Johnson",
+    email: "mike.johnson@example.com",
+    role: "Editor",
+    status: "inactive",
+    joinedDate: "2024-03-10",
   },
 ];
 
 export default function ManageUsers() {
   const [users, setUsers] = useState(initialUsers);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    role: 'User',
-    status: 'active'
+    name: "",
+    email: "",
+    role: "User",
+    status: "active",
   });
 
   const filteredUsers = users.filter(
     (user) =>
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.role.toLowerCase().includes(searchQuery.toLowerCase())
+      user.role.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleAddUser = () => {
     const newUser = {
       id: Date.now().toString(),
       ...formData,
-      joinedDate: new Date().toISOString().split('T')[0],
+      joinedDate: new Date().toISOString().split("T")[0],
     };
     setUsers([...users, newUser]);
     setIsAddModalOpen(false);
-    setFormData({ name: '', email: '', role: 'User', status: 'active' });
-    toast.success('User added successfully');
+    setFormData({ name: "", email: "", role: "User", status: "active" });
+    toast.success("User added successfully");
   };
 
   const handleEditUser = () => {
     if (!selectedUser) return;
     setUsers(
       users.map((user) =>
-        user.id === selectedUser.id ? { ...user, ...formData } : user
-      )
+        user.id === selectedUser.id ? { ...user, ...formData } : user,
+      ),
     );
     setIsEditModalOpen(false);
     setSelectedUser(null);
-    setFormData({ name: '', email: '', role: 'User', status: 'active' });
-    toast.success('User updated successfully');
+    setFormData({ name: "", email: "", role: "User", status: "active" });
+    toast.success("User updated successfully");
   };
 
   const handleDeleteUser = () => {
@@ -110,7 +110,7 @@ export default function ManageUsers() {
     setUsers(users.filter((user) => user.id !== selectedUser.id));
     setIsDeleteDialogOpen(false);
     setSelectedUser(null);
-    toast.success('User deleted successfully');
+    toast.success("User deleted successfully");
   };
 
   const openEditModal = (user) => {
@@ -132,10 +132,15 @@ export default function ManageUsers() {
   return (
     <div className="w-full h-full bg-background">
       <Navbar />
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="mb-2">User Management</h1>
-          <p className="text-muted-foreground">Manage your team members and their roles</p>
+      <div className="max-w-7xl mx-auto px-6 py-10">
+        <div className="mb-10 text-center sm:text-left">
+          <h1 className="text-3xl font-bold tracking-tight mb-2">
+            User Management
+          </h1>
+
+          <p className="text-muted-foreground text-sm sm:text-base">
+            Manage your team members and their roles
+          </p>
         </div>
 
         <div className="bg-card rounded-lg shadow-sm border">
@@ -193,23 +198,29 @@ export default function ManageUsers() {
                         <span>{user.name}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-muted-foreground">{user.email}</td>
+                    <td className="px-6 py-4 text-muted-foreground">
+                      {user.email}
+                    </td>
                     <td className="px-6 py-4">
                       <Badge variant="secondary">{user.role}</Badge>
                     </td>
                     <td className="px-6 py-4">
                       <Badge
-                        variant={user.status === 'active' ? 'default' : 'outline'}
+                        variant={
+                          user.status === "active" ? "default" : "outline"
+                        }
                         className={
-                          user.status === 'active'
-                            ? 'bg-green-100 text-green-700 hover:bg-green-100 border-green-200'
-                            : ''
+                          user.status === "active"
+                            ? "bg-green-100 text-green-700 hover:bg-green-100 border-green-200"
+                            : ""
                         }
                       >
                         {user.status}
                       </Badge>
                     </td>
-                    <td className="px-6 py-4 text-muted-foreground">{user.joinedDate}</td>
+                    <td className="px-6 py-4 text-muted-foreground">
+                      {user.joinedDate}
+                    </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <Button
@@ -254,7 +265,9 @@ export default function ManageUsers() {
                 id="add-name"
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="Enter full name"
                 className="mt-1.5"
               />
@@ -265,7 +278,9 @@ export default function ManageUsers() {
                 id="add-email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 placeholder="email@example.com"
                 className="mt-1.5"
               />
@@ -274,7 +289,9 @@ export default function ManageUsers() {
               <Label htmlFor="add-role">Role</Label>
               <Select
                 value={formData.role}
-                onValueChange={(value) => setFormData({ ...formData, role: value })}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, role: value })
+                }
               >
                 <SelectTrigger id="add-role" className="mt-1.5">
                   <SelectValue />
@@ -305,10 +322,7 @@ export default function ManageUsers() {
             </div>
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsAddModalOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>
               Cancel
             </Button>
             <Button
@@ -333,7 +347,9 @@ export default function ManageUsers() {
                 id="edit-name"
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 className="mt-1.5"
               />
             </div>
@@ -343,7 +359,9 @@ export default function ManageUsers() {
                 id="edit-email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 className="mt-1.5"
               />
             </div>
@@ -351,7 +369,9 @@ export default function ManageUsers() {
               <Label htmlFor="edit-role">Role</Label>
               <Select
                 value={formData.role}
-                onValueChange={(value) => setFormData({ ...formData, role: value })}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, role: value })
+                }
               >
                 <SelectTrigger id="edit-role" className="mt-1.5">
                   <SelectValue />
@@ -382,10 +402,7 @@ export default function ManageUsers() {
             </div>
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsEditModalOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>
               Cancel
             </Button>
             <Button
@@ -398,13 +415,16 @@ export default function ManageUsers() {
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete User</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete {selectedUser?.name}? This action cannot be
-              undone.
+              Are you sure you want to delete {selectedUser?.name}? This action
+              cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
