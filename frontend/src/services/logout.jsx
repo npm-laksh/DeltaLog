@@ -12,7 +12,7 @@ export const handleLogOut = async () => {
             console.log("Backend session closed.");
         }
     } catch (err) {
-        console.error("Logout API failed:", err.response?.data || err.message);
+        console.error("Logout API failed: ", err.response?.data || err.message);
     } finally {
         // clear storage
         localStorage.clear();

@@ -9,4 +9,7 @@ import java.util.Optional;
 
 public interface AttendanceRepo extends JpaRepository<Attendance, Integer> {
     Optional<Attendance> findByUserAndStatus(User user, AttendanceStatus status);
+
+    // find the most recent attendance record for the logged-in user
+    Optional<Attendance> findFirstByUserOrderByCheckInTimeDesc(User user);
 }

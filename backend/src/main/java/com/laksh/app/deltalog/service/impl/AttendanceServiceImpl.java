@@ -25,7 +25,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     private final AttendanceMapper attendanceMapper;
     private final UserRepo userRepo;
 
-    @Override
+    // check in using ID (decommissioned)
     @Transactional
     public AttendanceResponseDTO checkIn(CheckInRequestDTO request) {
 
@@ -46,7 +46,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         return attendanceMapper.toAttendanceResponseDTO(attendanceRepo.save(attendance));
     }
 
-    @Override
+    // check out using ID (decommissioned)
     @Transactional
     public AttendanceResponseDTO checkOut(CheckOutRequestDTO request) {
         User user = userRepo.findById(request.userId())
@@ -104,4 +104,57 @@ public class AttendanceServiceImpl implements AttendanceService {
                     attendanceRepo.save(attendance);
                 });
     }
+
+    @Override
+    @Transactional
+    public AttendanceResponseDTO checkInByEmail(String email) {
+        // 1. Find user by email (This finds the entity containing the real UUID)
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+
+        // 2. Prevent double check-in
+        if(attendanceRepo.findByUserAndStatus(user, AttendanceStatus.ACTIVE).isPresent()) {
+            throw new UserFoundException("User is already checked in and active.");
+        }
+
+        // 3. Create new attendance record
+        Attendance attendance = new Attendance();
+        attendance.setUser(user); // JPA handles the UUID foreign key automatically
+        attendance.setCheckInTime(LocalDateTime.now());
+        attendance.setStatus(AttendanceStatus.ACTIVE);
+
+        return attendanceMapper.toAttendanceResponseDTO(attendanceRepo.save(attendance));
+    }
+
+    @Override
+    @Transactional
+    public AttendanceResponseDTO checkOutByEmail(String email) {
+        // 1. Find user by email
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+
+        // 2. Find the active session for this user
+        Attendance attendance = attendanceRepo.findByUserAndStatus(user, AttendanceStatus.ACTIVE)
+                .orElseThrow(() -> new RuntimeException("No active work session found for this user."));
+
+        // 3. Close session and calculate metrics
+        attendance.setCheckOutTime(LocalDateTime.now());
+        attendance.setStatus(AttendanceStatus.COMPLETED);
+        calculateMetric(attendance);
+
+        return attendanceMapper.toAttendanceResponseDTO(attendanceRepo.save(attendance));
+    }
+
+
+    // get latest attendace record for logged in user
+    @Override
+    public AttendanceResponseDTO getLatestRecord(String email) {
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        return attendanceRepo.findFirstByUserOrderByCheckInTimeDesc(user)
+                .map(attendanceMapper::toAttendanceResponseDTO)
+                .orElse(null); // returns null if user never checked in
+    }
+
 }
