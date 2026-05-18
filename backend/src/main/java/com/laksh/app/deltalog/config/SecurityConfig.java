@@ -62,7 +62,7 @@ public class SecurityConfig {
                         // Use shouldBeTrusted to ignore the JWT filter entirely for these paths
                         .requestMatchers("/api/auth/login").permitAll()
 //                        .requestMatchers("/api/attendance/**").permitAll() // ***TESTING** TO BE REMOVED
-                        .requestMatchers("/api/auth/register").hasRole("ADMIN")
+                        .requestMatchers("/api/auth/register", "/api/auth/delete-user").hasRole("ADMIN")
                         .requestMatchers("/api/auth/logout").authenticated() // must have token to logout
                         .anyRequest().authenticated()
                 )

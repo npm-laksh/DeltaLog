@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Search, Plus } from "lucide-react";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { toast } from "sonner"; 
+import { toast, Toaster } from "sonner"; 
 import Navbar from "../components/common/Navbar";
 import UserTable from "../components/UserTable";
 import CreateUserDialog from "../components/CreateUserDialog";
 import EditUserDialog from "../components/EditUserDialog";
 import DeleteUserDialog from "../components/DeleteUserDialog";
 import { getAllUsers } from "../services/getallusers"
+import { deleteuser } from "../services/deleteuser";
+import { updateUser } from "../services/updateuser";
 
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
@@ -20,13 +22,16 @@ export default function ManageUsers() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
+
+  const username = localStorage.getItem('username');
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     role: "USER",
+    password: ""
   });
 
-  // 1. Fetch data from Backend on mount
   useEffect(() => {
     const loadUsers = async () => {
       try {
@@ -43,7 +48,7 @@ export default function ManageUsers() {
     loadUsers();
   }, []);
 
-  // 2. Defensive Filter Logic (matching your UserResponseDTO)
+  // defensive filter logic to match user req DTO
   const filteredUsers = users.filter((user) => {
     const query = searchQuery.toLowerCase();
     const username = user.username?.toLowerCase() || "";
@@ -59,6 +64,7 @@ export default function ManageUsers() {
       username: user.username,
       email: user.email,
       role: user.role,
+      password: ""
     });
     setIsEditModalOpen(true);
   };
@@ -68,21 +74,59 @@ export default function ManageUsers() {
     setIsDeleteDialogOpen(true);
   };
 
-  // Logic for CRUD actions (To be connected to APIs next)
   const handleAddUser = () => {
     setIsAddModalOpen(false);
     toast.info("Registration logic is handled via /register-user");
   };
 
-  const handleEditUser = () => {
-    setIsEditModalOpen(false);
-    toast.success("User updated (Frontend only for now)");
-  };
+  const handleEditUser = async () => {
+  if (!selectedUser) return;
 
-  const handleDeleteUser = () => {
+  try {
+    const updatedPayload = {
+      id: selectedUser.id,
+      username: formData.username,
+      email: formData.email,
+      role: formData.role,
+      password: formData.password || "", // if empty string -> backend "don't change" pw
+    };
+
+    await updateUser(updatedPayload);
+
+    // ui updated
+    setUsers(
+      users.map((u) =>
+        u.id === selectedUser.id
+          ? { ...u, username: formData.username, email: formData.email, role: formData.role }
+          : u
+      )
+    );
+
+    setIsEditModalOpen(false);
+    setSelectedUser(null);
+    toast.success("User configuration updated successfully");
+  } catch (err) {
+    toast.error(err.response?.data || "Failed to submit user updates");
+  }
+};
+
+  const handleDeleteUser = async () => {
+
+  if (!selectedUser) return;
+
+  try {
     setIsDeleteDialogOpen(false);
-    toast.success("User deleted (Frontend only for now)");
-  };
+
+    await deleteuser(selectedUser.username);
+    
+    setUsers(users.filter((user) => user.id !== selectedUser.id));
+
+    toast.success(`User '${selectedUser.username}' deleted successfully`);
+    setSelectedUser(null);
+  } catch (err) {
+    toast.error("Failed to delete user from server");
+  }
+};
 
   return (
     <div className="w-full min-h-screen bg-background">
@@ -160,6 +204,8 @@ export default function ManageUsers() {
         selectedUser={selectedUser}
         handleDeleteUser={handleDeleteUser}
       />
+
+      <Toaster richColors position="top-center" />
     </div>
   );
 }

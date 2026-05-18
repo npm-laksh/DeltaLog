@@ -34,7 +34,7 @@ export default function DeleteUserDialog({
             onClick={handleDeleteUser}
             className="bg-red-600 hover:bg-red-700 text-white"
           >
-            Delete
+            Confirm Delete
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
