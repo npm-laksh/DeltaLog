@@ -78,10 +78,10 @@ export default function Navbar() {
             {userRole === "ADMIN" && (
               <Button
                 variant="outline"
-                onClick={() => navigate("/register-user")}
+                onClick={() => navigate("/manage-user")}
                 className="h-9 rounded-full px-5 text-sm"
               >
-                Register user
+                Manage users
               </Button>
             )}
             

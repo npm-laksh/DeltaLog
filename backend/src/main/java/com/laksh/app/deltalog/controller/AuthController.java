@@ -6,9 +6,11 @@ import com.laksh.app.deltalog.dto.request.DeleteUserRequestDTO;
 import com.laksh.app.deltalog.dto.response.DeleteUserResponseDTO;
 import com.laksh.app.deltalog.dto.response.LoginResponseDTO;
 import com.laksh.app.deltalog.dto.response.RegisterResponseDTO;
+import com.laksh.app.deltalog.dto.response.UserResponseDTO;
 import com.laksh.app.deltalog.entity.User;
 import com.laksh.app.deltalog.repository.UserRepo;
 import com.laksh.app.deltalog.service.AuthService;
+import com.laksh.app.deltalog.service.UserService;
 import com.laksh.app.deltalog.service.impl.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -16,12 +18,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -40,6 +45,7 @@ public class AuthController {
     private final UserRepo userRepo;
 
     @PostMapping("/register-user")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RegisterResponseDTO> register(@Valid @RequestBody RegisterRequestDTO request) {
         RegisterResponseDTO response = authService.register(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -79,6 +85,7 @@ public class AuthController {
     }
 
     @DeleteMapping("/delete-user")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DeleteUserResponseDTO> delete(@RequestBody DeleteUserRequestDTO request) {
         DeleteUserResponseDTO response = authService.deleteUser(request);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -109,4 +116,10 @@ public class AuthController {
         authService.logoutByEmail(authentication.getName());
         return ResponseEntity.ok("Logged out successfully");
     }
+
+//    @GetMapping("/get-users")
+//    @PreAuthorize("hasRole('ADMIN')")
+//    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+//        return ResponseEntity.ok(userService.getAllUsers());
+//    }
 }

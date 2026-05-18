@@ -60,6 +60,7 @@ public class AuthServiceImpl implements AuthService {
         // 5. save user
         User savedUser = userRepo.save(user);
 
+//        System.out.println("Encoded password length: " + encodedPassword.length());
         // 6. return safe response
         return userMapper.toRegisterResponseDTO(savedUser);
     }
