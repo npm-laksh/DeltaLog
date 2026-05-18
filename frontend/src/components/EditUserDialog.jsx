@@ -25,6 +25,8 @@ export default function EditUserDialog({
   setFormData,
   handleEditUser,
 }) {
+  // console.log('this is data', formData);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -35,15 +37,14 @@ export default function EditUserDialog({
         <div className="space-y-4">
           <div>
             <Label htmlFor="edit-name">Name</Label>
-
             <Input
               id="edit-name"
               type="text"
-              value={formData.name}
+              value={formData.username || ""} 
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  name: e.target.value,
+                  username: e.target.value, 
                 })
               }
               className="mt-1.5"
@@ -52,11 +53,10 @@ export default function EditUserDialog({
 
           <div>
             <Label htmlFor="edit-email">Email</Label>
-
             <Input
               id="edit-email"
               type="email"
-              value={formData.email}
+              value={formData.email || ""}
               onChange={(e) =>
                 setFormData({
                   ...formData,
@@ -69,7 +69,6 @@ export default function EditUserDialog({
 
           <div>
             <Label htmlFor="edit-password">New Password</Label>
-
             <Input
               id="edit-password"
               type="password"
@@ -80,14 +79,14 @@ export default function EditUserDialog({
                   password: e.target.value,
                 })
               }
-              placeholder="Enter new password"
+              // Friendly reminder for the admin
+              placeholder="Leave blank to keep current password" 
               className="mt-1.5"
             />
           </div>
 
           <div>
             <Label htmlFor="edit-role">Role</Label>
-
             <Select
               value={formData.role}
               onValueChange={(value) =>
@@ -100,11 +99,9 @@ export default function EditUserDialog({
               <SelectTrigger id="edit-role" className="mt-1.5">
                 <SelectValue />
               </SelectTrigger>
-
               <SelectContent>
-                <SelectItem value="User">User</SelectItem>
-
-                <SelectItem value="Admin">Admin</SelectItem>
+                <SelectItem value="EMPLOYEE">User</SelectItem>
+                <SelectItem value="ADMIN">Admin</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -117,7 +114,7 @@ export default function EditUserDialog({
 
           <Button
             onClick={handleEditUser}
-            disabled={!formData.name || !formData.email}
+            disabled={!formData.username || !formData.email} 
           >
             Save Changes
           </Button>
