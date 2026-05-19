@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,7 +86,6 @@ public class TaskServiceImpl implements TaskService {
 
         // ensure associate attendance is still ACTIVE
         // cannot update once checked out
-
         if(taskToBeUpdated.getAttendance().getStatus() != AttendanceStatus.ACTIVE) {
             throw new AttendanceSessionClosed("Cannot update task. Session already Checked Out");
         }
@@ -120,6 +120,25 @@ public class TaskServiceImpl implements TaskService {
 
         // delete task
         taskRepo.delete(taskToBeDeleted);
+    }
+
+    @Override
+    public List<TaskResponseDTO> getTasksByDate(String email, LocalDate date) {
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User context missing"));
+
+        // locate attendance rec for the user for that day
+        Attendance attendance = attendanceRepo.findByUserAndDate(user, date)
+                .orElse(null);
+
+        if (attendance == null) {
+            return List.of();
+        }
+
+        return taskRepo.findByAttendanceId(attendance.getId())
+                .stream()
+                .map(taskMapper :: toTaskResponseDTO)
+                .collect(Collectors.toList());
     }
 
     // get task for logged in user
