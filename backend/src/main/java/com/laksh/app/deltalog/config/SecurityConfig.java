@@ -64,6 +64,7 @@ public class SecurityConfig {
 //                        .requestMatchers("/api/attendance/**").permitAll() // ***TESTING** TO BE REMOVED
                         .requestMatchers("/api/auth/register", "/api/auth/delete-user").hasRole("ADMIN")
                         .requestMatchers("/api/auth/logout").authenticated() // must have token to logout
+                        .requestMatchers("/api/tasks/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authProvider())

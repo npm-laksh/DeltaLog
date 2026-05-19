@@ -7,6 +7,18 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+// to uncomment later
+//@Entity
+//@Table(
+//        name = "attendance",
+//        uniqueConstraints = {
+//                @UniqueConstraint(
+//                        name = "unique_user_daily_attendance",
+//                        columnNames = {"user_id", "attendance_date"} // If you add a dedicated date column
+//                )
+//        }
+//)
+
 @Entity
 @Table(name = "attendance")
 @Data

@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LoginPage from "../pages/LoginPage";
 import UserDashboardPage from "../pages/UserDashboardPage";
-import { ErrorPage } from "../pages/ErrorPage";
+import ErrorPage from "../pages/ErrorPage"
 import { ProtectedRoutes } from "./ProtectedRoutes";
 import ManageUsers from "../pages/ManageUsers";
 
