@@ -25,7 +25,6 @@ export default function EditUserDialog({
   setFormData,
   handleEditUser,
 }) {
-  // console.log('this is data', formData);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

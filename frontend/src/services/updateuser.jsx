@@ -5,7 +5,7 @@ export const updateUser = async (updatedData) => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    // updatedData will look like: { id, username, email, role, password }
+    // updatedData format: { id, username, email, role, password }
     const response = await api.put("/user/update", updatedData);
     return response.data;
   } catch (err) {
