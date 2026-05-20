@@ -19,7 +19,8 @@ public class AttendanceMapper {
                 attendance.getTotalWorkMin(),
                 attendance.getOvertime(),
                 attendance.getUndertime(),
-                attendance.getStatus()
+                attendance.getStatus(),
+                attendance.getUser() != null ? attendance.getUser().getId() : null
         );
     }
 }

@@ -11,19 +11,21 @@ import DeleteUserDialog from "../components/DeleteUserDialog";
 import { getAllUsers } from "../services/getallusers"
 import { deleteuser } from "../services/deleteuser";
 import { updateUser } from "../services/updateuser";
+import UserLogsModal from "../components/UserLogsModal";
 
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // action (delete/edit) modal
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  // view logs modal
+  const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-
-
-  const username = localStorage.getItem('username');
 
   const [formData, setFormData] = useState({
     username: "",
@@ -48,14 +50,13 @@ export default function ManageUsers() {
     loadUsers();
   }, []);
 
-  // defensive filter logic to match user req DTO
   const filteredUsers = users.filter((user) => {
     const query = searchQuery.toLowerCase();
-    const username = user.username?.toLowerCase() || "";
+    const uname = user.username?.toLowerCase() || "";
     const email = user.email?.toLowerCase() || "";
     const role = user.role?.toLowerCase() || "";
 
-    return username.includes(query) || email.includes(query) || role.includes(query);
+    return uname.includes(query) || email.includes(query) || role.includes(query);
   });
 
   const openEditModal = (user) => {
@@ -74,59 +75,65 @@ export default function ManageUsers() {
     setIsDeleteDialogOpen(true);
   };
 
-  const handleAddUser = () => {
+  const openLogsModal = (user) => {
+    setSelectedUser({
+      id: user.id,
+      name: user.username, 
+      email: user.email
+    });
+    setIsLogsModalOpen(true);
+  };
+
+  const handleAddUser = (newUser) => {
+    // take new db user entity & append into local user table list
+    setUsers((prevUsers) => [newUser, ...prevUsers]);
     setIsAddModalOpen(false);
-    toast.info("Registration logic is handled via /register-user");
+    toast.success(`User '${newUser.username}' registered successfully!`);
   };
 
   const handleEditUser = async () => {
-  if (!selectedUser) return;
+    if (!selectedUser) return;
 
-  try {
-    const updatedPayload = {
-      id: selectedUser.id,
-      username: formData.username,
-      email: formData.email,
-      role: formData.role,
-      password: formData.password || "", // if empty string -> backend "don't change" pw
-    };
+    try {
+      const updatedPayload = {
+        id: selectedUser.id,
+        username: formData.username,
+        email: formData.email,
+        role: formData.role,
+        password: formData.password || "",
+      };
 
-    await updateUser(updatedPayload);
+      await updateUser(updatedPayload);
 
-    // ui updated
-    setUsers(
-      users.map((u) =>
-        u.id === selectedUser.id
-          ? { ...u, username: formData.username, email: formData.email, role: formData.role }
-          : u
-      )
-    );
+      setUsers(
+        users.map((u) =>
+          u.id === selectedUser.id
+            ? { ...u, username: formData.username, email: formData.email, role: formData.role }
+            : u
+        )
+      );
 
-    setIsEditModalOpen(false);
-    setSelectedUser(null);
-    toast.success("User configuration updated successfully");
-  } catch (err) {
-    toast.error(err.response?.data || "Failed to submit user updates");
-  }
-};
+      setIsEditModalOpen(false);
+      setSelectedUser(null);
+      toast.success("User setting updated successfully");
+    } catch (err) {
+      toast.error(err.response?.data || "Failed to submit user updates");
+    }
+  };
 
   const handleDeleteUser = async () => {
+    if (!selectedUser) return;
 
-  if (!selectedUser) return;
-
-  try {
-    setIsDeleteDialogOpen(false);
-
-    await deleteuser(selectedUser.username);
-    
-    setUsers(users.filter((user) => user.id !== selectedUser.id));
-
-    toast.success(`User '${selectedUser.username}' deleted successfully`);
-    setSelectedUser(null);
-  } catch (err) {
-    toast.error("Failed to delete user from server");
-  }
-};
+    try {
+      setIsDeleteDialogOpen(false);
+      await deleteuser(selectedUser.username);
+      setUsers(users.filter((user) => user.id !== selectedUser.id));
+      toast.success(`User '${selectedUser.username}' deleted successfully`);
+      setSelectedUser(null);
+    } catch (err) {
+      toast.error("Failed to delete user from server");
+    }
+  };
 
   return (
     <div className="w-full min-h-screen bg-background">
@@ -166,10 +173,12 @@ export default function ManageUsers() {
               Fetching team members...
             </div>
           ) : (
+
             <UserTable
               filteredUsers={filteredUsers}
               openEditModal={openEditModal}
               openDeleteDialog={openDeleteDialog}
+              openLogsModal={openLogsModal} 
             />
           )}
 
@@ -181,7 +190,6 @@ export default function ManageUsers() {
         </div>
       </div>
 
-      {/* Dialogs */}
       <CreateUserDialog
         open={isAddModalOpen}
         onOpenChange={setIsAddModalOpen}
@@ -203,6 +211,15 @@ export default function ManageUsers() {
         onOpenChange={setIsDeleteDialogOpen}
         selectedUser={selectedUser}
         handleDeleteUser={handleDeleteUser}
+      />
+
+      <UserLogsModal 
+        open={isLogsModalOpen}
+        onOpenChange={(val) => {
+          setIsLogsModalOpen(val);
+          if (!val) setSelectedUser(null);
+        }}
+        user={selectedUser}
       />
 
       <Toaster richColors position="top-center" />

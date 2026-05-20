@@ -1,9 +1,10 @@
-import { useState } from "react"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../components/ui/card"
-import { Input } from "../components/ui/input"
-import { Button } from "../components/ui/button"
-import { useNavigate } from "react-router-dom"
-import api from "../services/api"
+import { useState } from "react";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { toast, Toaster } from "sonner";
+import api from "../services/api";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -25,7 +26,7 @@ export default function LoginPage() {
       }
     } catch (err) {
       console.error("Login failed:", err.response?.data || err.message);
-      alert("Invalid email or password");
+      toast.error("Invalid email or password");
     }
   }
 
@@ -56,6 +57,7 @@ export default function LoginPage() {
           </form>
         </CardContent>
       </Card>
+      <Toaster position="top-center" />
     </div>
   );
 }

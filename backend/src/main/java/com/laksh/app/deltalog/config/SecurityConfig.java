@@ -60,7 +60,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Use shouldBeTrusted to ignore the JWT filter entirely for these paths
-                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/login", "/error").permitAll()
 //                        .requestMatchers("/api/attendance/**").permitAll() // ***TESTING** TO BE REMOVED
                         .requestMatchers("/api/auth/register", "/api/auth/delete-user").hasRole("ADMIN")
                         .requestMatchers("/api/auth/logout").authenticated() // must have token to logout

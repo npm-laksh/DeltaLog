@@ -16,7 +16,7 @@ import { toast } from "sonner";
 export default function UserDashboardPage() {
   const [liveDuration, setLiveDuration] = useState("00:00:00");
   const [attendance, setAttendance] = useState(null);
-  
+
   // calendar date & task tracking status
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [tasks, setTasks] = useState([]);
@@ -25,33 +25,52 @@ export default function UserDashboardPage() {
   // load latest attendance data
   useEffect(() => {
     const loadData = async () => {
-      const data = await getLatestAttendance();
-      setAttendance(data);
+      try {
+        const data = await getLatestAttendance();
+
+        // reset attendance to new state for each new day
+        if (data && data.checkInTime) {
+          const attendanceDateStr = formatDateString(
+            new Date(data.checkInTime),
+          );
+          const todayDateStr = formatDateString(new Date());
+
+          if (attendanceDateStr !== todayDateStr) {
+            setAttendance(null);
+            setLiveDuration("00:00:00");
+            return;
+          }
+        }
+
+        setAttendance(data);
+      } catch (error) {
+        console.error("failed to load attendance data", error);
+      }
     };
     loadData();
   }, []);
 
   // fetch tasks based on date / calendar day
 
-useEffect(() => {
-  const loadHistoricalTasks = async () => {
-    try {
-      setTasksLoading(true);
-      setTasks([]); 
+  useEffect(() => {
+    const loadHistoricalTasks = async () => {
+      try {
+        setTasksLoading(true);
+        setTasks([]);
 
-      const targetDateStr = formatDateString(selectedDate);
-      const data = await getTasksByDate(targetDateStr);
-      setTasks(data || []);
-    } catch (err) {
-      setTasks([]); 
-      toast.error("Could not fetch workspace records for this date.");
-    } finally {
-      setTasksLoading(false);
-    }
-  };
+        const targetDateStr = formatDateString(selectedDate);
+        const data = await getTasksByDate(targetDateStr);
+        setTasks(data || []);
+      } catch (err) {
+        setTasks([]);
+        toast.error("Could not fetch workspace records for this date.");
+      } finally {
+        setTasksLoading(false);
+      }
+    };
 
-  loadHistoricalTasks();
-}, [selectedDate]);
+    loadHistoricalTasks();
+  }, [selectedDate]);
 
   useEffect(() => {
     let interval;
@@ -61,9 +80,15 @@ useEffect(() => {
         const now = new Date().getTime();
         const diffInMs = now - start;
 
-        const hours = Math.floor(diffInMs / 3600000).toString().padStart(2, "0");
-        const mins = Math.floor((diffInMs % 3600000) / 60000).toString().padStart(2, "0");
-        const secs = Math.floor((diffInMs % 60000) / 1000).toString().padStart(2, "0");
+        const hours = Math.floor(diffInMs / 3600000)
+          .toString()
+          .padStart(2, "0");
+        const mins = Math.floor((diffInMs % 3600000) / 60000)
+          .toString()
+          .padStart(2, "0");
+        const secs = Math.floor((diffInMs % 60000) / 1000)
+          .toString()
+          .padStart(2, "0");
 
         setLiveDuration(`${hours}:${mins}:${secs}`);
       }, 1000);
@@ -87,7 +112,8 @@ useEffect(() => {
     });
   };
 
-  const isToday = formatDateString(selectedDate) === formatDateString(new Date());
+  const isToday =
+    formatDateString(selectedDate) === formatDateString(new Date());
 
   return (
     <div className="min-h-screen bg-background">
@@ -119,7 +145,9 @@ useEffect(() => {
           <Card className="w-52 h-28 bg-primary/5 border-primary/20">
             <CardHeader>
               <CardTitle className="text-sm">
-                {attendance?.status === "ACTIVE" ? "Live Duration" : "Total Duration"}
+                {attendance?.status === "ACTIVE"
+                  ? "Live Duration"
+                  : "Total Duration"}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -133,18 +161,19 @@ useEffect(() => {
             </CardContent>
           </Card>
 
-          <DemoCalendarComponent 
-            selectedDate={selectedDate} 
-            setSelectedDate={setSelectedDate} 
+          <DemoCalendarComponent
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
           />
         </div>
 
-        <JournalEntry 
-          tasks={tasks} 
+        <JournalEntry
+          tasks={tasks}
           setTasks={setTasks}
-          loading={tasksLoading} 
-          isEditable={isToday} 
+          loading={tasksLoading}
+          isEditable={isToday}
           selectedDate={selectedDate}
+          attendance={attendance}
         />
       </main>
     </div>

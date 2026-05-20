@@ -11,5 +11,6 @@ public record AttendanceResponseDTO(
         int totalWorkMin,
         int overtime,
         int undertime,
-        AttendanceStatus status
+        AttendanceStatus status,
+        Integer userId
 ) {}

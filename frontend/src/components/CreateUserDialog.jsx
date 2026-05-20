@@ -39,9 +39,10 @@ export default function CreateUserDialog({
 
       const response = await registeruser(payload);
 
-      console.log(response);
+      const newCreatedUser = response.data || response;
 
-      handleAddUser();
+      handleAddUser(newCreatedUser);
+      setFormData({ username: "", email: "", role: "USER", password: "" });
 
       onOpenChange(false);
 

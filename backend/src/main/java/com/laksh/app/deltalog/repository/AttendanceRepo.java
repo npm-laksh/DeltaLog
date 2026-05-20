@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface AttendanceRepo extends JpaRepository<Attendance, Integer> {
@@ -22,4 +24,14 @@ public interface AttendanceRepo extends JpaRepository<Attendance, Integer> {
             @Param("user") User user,
             @Param("date") LocalDate date
     );
+
+    @Query("SELECT a FROM Attendance a WHERE a.user.email = :email")
+    List<Attendance> findByUserEmail(@Param("email") String email);
+
+    @Query("SELECT a FROM Attendance a WHERE a.user.email = :email " + "AND a.checkInTime >= :startOfDay AND a.checkInTime <= :endOfDay")
+    Optional<Attendance> findByEmailAndCheckInBetween(
+            @Param("email") String email,
+            @Param("startOfDay")LocalDateTime startOfDay,
+            @Param("endOfDay")LocalDateTime endOfDay
+            );
 }

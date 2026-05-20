@@ -4,16 +4,17 @@ import ThemeToggle from "./ThemeToggle";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { checkin, checkout, getLatestAttendance } from "../../services/checkin";
-import { 
-  AlertDialogHeader, 
-  AlertDialogTitle, 
-  AlertDialogDescription, 
-  AlertDialog, 
-  AlertDialogContent ,
+import {
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialog,
+  AlertDialogContent,
   AlertDialogFooter,
   AlertDialogCancel,
-  AlertDialogAction
+  AlertDialogAction,
 } from "../ui/alert-dialog";
+import { toast, Toaster } from "sonner";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -23,18 +24,46 @@ export default function Navbar() {
   const [isWorking, setIsWorking] = useState(false);
   const [isConfirm, setIsConfirm] = useState(false);
 
-  // latest attendance status data
+  // track shift
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  // latest attendance status data + check shift
   useEffect(() => {
     const syncStatus = async () => {
-      const data = await getLatestAttendance();
-      if (data && data.status === "ACTIVE") {
-        setIsWorking(true);
-      } else {
-        setIsWorking(false);
+      try {
+        const data = await getLatestAttendance();
+
+        if (data) {
+          if (data.status === "ACTIVE") {
+            setIsWorking(true);
+            setIsCompleted(false);
+          } else if (data.status === "COMPLETED") {
+            setIsWorking(false);
+
+            // check if check out is from todays date
+            if (data.checkOutTime) {
+              const checkOutDate = new Date(data.checkOutTime).toDateString();
+              const todayDate = new Date().toDateString();
+
+              if (checkOutDate === todayDate) {
+                setIsCompleted(true);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error syncing status:", error);
       }
     };
     syncStatus();
   }, []);
+
+  const getButtonText = () => {
+  if (isWorking) return "Check Out";
+  if (isCompleted) return "Shift Completed";
+  return "Check In";
+};
+
 
   // logic to decide whether to check-in immediately or show the popup
   const handleMainButtonClick = () => {
@@ -56,12 +85,15 @@ export default function Navbar() {
       } else {
         await checkout();
         setIsWorking(false);
-        setIsConfirm(false); 
+        setIsCompleted(true); // lock after checking out
+        setIsConfirm(false);
       }
       // update dashboard
       window.location.reload();
     } catch (error) {
       console.error("Attendance action failed", error);
+      const msg = "Attendance update denied";
+      toast.error(msg);
     }
   };
 
@@ -69,8 +101,8 @@ export default function Navbar() {
     <>
       <header className="border-b border-border bg-background/80 backdrop-blur">
         <div className="mx-auto flex h-14 items-center justify-between px-6">
-          <h1 className="text-sm font-medium tracking-tight text-foreground">
-            Hola {username}!
+          <h1 className="text-l font-medium tracking-tight text-foreground">
+            Hola {username} !
           </h1>
 
           <div className="flex px-5 gap-2">
@@ -84,13 +116,18 @@ export default function Navbar() {
                 Manage users
               </Button>
             )}
-            
+
             <Button
               variant={isWorking ? "destructive" : "outline"}
               onClick={handleMainButtonClick}
-              className="h-9 rounded-full px-5 text-sm"
+              disabled={isCompleted} // disable interaction if completed today
+              className={`h-9 rounded-full px-5 text-sm transition-all ${
+                isCompleted
+                  ? "opacity-50 cursor-not-allowed bg-muted text-muted-foreground"
+                  : ""
+              }`}
             >
-              {isWorking ? "Check Out" : "Check In"}
+              {getButtonText()}
             </Button>
 
             <Button
@@ -104,7 +141,6 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* checkout confirmation popup */}
       <AlertDialog open={isConfirm} onOpenChange={setIsConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -125,6 +161,7 @@ export default function Navbar() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <Toaster />
     </>
   );
 }

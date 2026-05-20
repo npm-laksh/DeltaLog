@@ -11,6 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/attendance")
 @RequiredArgsConstructor
@@ -41,5 +43,14 @@ public class AttendanceController {
     @GetMapping("/latest-attendance")
     public ResponseEntity<AttendanceResponseDTO> getLatest(Authentication auth) {
         return ResponseEntity.ok(attendanceService.getLatestRecord(auth.getName()));
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<AttendanceResponseDTO>> getUserAttendanceHistory(@RequestParam("email") String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        List<AttendanceResponseDTO> history = attendanceService.getAttendanceHistoryByEmail(email);
+        return ResponseEntity.ok(history);
     }
 }

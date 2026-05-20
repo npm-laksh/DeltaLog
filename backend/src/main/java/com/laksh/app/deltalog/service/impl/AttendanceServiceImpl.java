@@ -1,5 +1,7 @@
 package com.laksh.app.deltalog.service.impl;
 
+import com.laksh.app.deltalog.exception.ActiveSessionExists;
+import com.laksh.app.deltalog.exception.AlreadyCheckedOut;
 import com.laksh.app.deltalog.mapper.AttendanceMapper;
 import com.laksh.app.deltalog.dto.request.CheckInRequestDTO;
 import com.laksh.app.deltalog.dto.request.CheckOutRequestDTO;
@@ -17,6 +19,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -108,16 +113,37 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Override
     @Transactional
     public AttendanceResponseDTO checkInByEmail(String email) {
-        // 1. Find user by email (This finds the entity containing the real UUID)
+
+        // define todays time boudaries (00:00:00 - 23:59:59)
+        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+
+        // 1. check if user already had a session today
+        Optional<Attendance> existingDailyRec = attendanceRepo
+                .findByEmailAndCheckInBetween(email, startOfDay, endOfDay);
+
+        if (existingDailyRec.isPresent()) {
+            Attendance rec = existingDailyRec.get();
+
+            // scenario 1: user is currently checked in -> active session
+            if (rec.getCheckOutTime() == null) {
+                throw new ActiveSessionExists("You are already checked in for today");
+            } else {
+                throw new AlreadyCheckedOut("You already checked out & completed your shift for today. Pleaase come back tomorrow.");
+            }
+        }
+
+
+        // 2. Find user by email (This finds the entity containing the real UUID)
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
 
-        // 2. Prevent double check-in
+        // 3. Prevent double check-in
         if(attendanceRepo.findByUserAndStatus(user, AttendanceStatus.ACTIVE).isPresent()) {
             throw new UserFoundException("User is already checked in and active.");
         }
 
-        // 3. Create new attendance record
+        // 4. Create new attendance record
         Attendance attendance = new Attendance();
         attendance.setUser(user); // JPA handles the UUID foreign key automatically
         attendance.setCheckInTime(LocalDateTime.now());
@@ -155,6 +181,24 @@ public class AttendanceServiceImpl implements AttendanceService {
         return attendanceRepo.findFirstByUserOrderByCheckInTimeDesc(user)
                 .map(attendanceMapper::toAttendanceResponseDTO)
                 .orElse(null); // returns null if user never checked in
+    }
+
+
+    @Override
+    public List<AttendanceResponseDTO> getAttendanceHistoryByEmail(String email) {
+        return attendanceRepo.findByUserEmail(email)
+                .stream()
+                .map(attendance -> new AttendanceResponseDTO(
+                        attendance.getId(),
+                        attendance.getCheckInTime(),
+                        attendance.getCheckOutTime(),
+                        attendance.getTotalWorkMin(),
+                        attendance.getOvertime(),
+                        attendance.getUndertime(),
+                        attendance.getStatus(),
+                        attendance.getUser() != null ? attendance.getUser().getId() : null
+                ))
+                .collect(Collectors.toList());
     }
 
 }
