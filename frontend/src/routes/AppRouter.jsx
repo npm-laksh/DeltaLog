@@ -2,9 +2,10 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LoginPage from "../pages/LoginPage";
 import UserDashboardPage from "../pages/UserDashboardPage";
-import ErrorPage from "../pages/ErrorPage"
+import ErrorPage from "../pages/ErrorPage";
 import { ProtectedRoutes } from "./ProtectedRoutes";
 import ManageUsers from "../pages/ManageUsers";
+import AdminRoute from "../routes/AdminRoute";
 
 export default function AppRouter() {
   const [loading, setLoading] = useState(true);
@@ -29,23 +30,24 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route
+          path="/"
+          element={isAuth ? <Navigate to="/user-dashboard" /> : <LoginPage />}
+        />
 
-        <Route 
-          path="/" 
-          element={isAuth ? <Navigate to="/user-dashboard" /> : <LoginPage />} 
+        <Route
+          path="/login"
+          element={isAuth ? <Navigate to="/user-dashboard" /> : <LoginPage />}
         />
-        
-        <Route 
-          path="/login" 
-          element={isAuth ? <Navigate to="/user-dashboard" /> : <LoginPage />} 
-        />
-        
+
         <Route path="*" element={<ErrorPage />} />
-
-        {/* Protected routes */}
         <Route element={<ProtectedRoutes />}>
           <Route path="/user-dashboard" element={<UserDashboardPage />} />
-          <Route path="/manage-user" element={<ManageUsers />} />
+
+          <Route element={<AdminRoute />}>
+            {/* add admin paths here */}
+            <Route path="/manage-user" element={<ManageUsers />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

@@ -11,7 +11,7 @@ import {
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
 import { Plus, Pencil, Trash2, Clock } from "lucide-react";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 import { createNewTask } from "../services/createTask";
 import { deleteTaskById } from "../services/deleteTaskById";
 import { updateTaskById } from "../services/updateTaskById";
@@ -327,7 +327,7 @@ export default function JournalEntry({
           ))}
         </div>
       )}
-      <Toaster richColors position="top-center" />
+      {/* <Toaster richColors position="top-center" /> */}
     </div>
   );
 }

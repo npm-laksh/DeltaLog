@@ -46,7 +46,7 @@ export default function CreateUserDialog({
 
       onOpenChange(false);
 
-      toast.success("User created successfully");
+      // toast.success("User created successfully");
 
     } catch (err) {
       console.error(err);

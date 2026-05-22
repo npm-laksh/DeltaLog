@@ -1,5 +1,5 @@
 import { useTheme } from "next-themes"
-import { toast } from "sonner";
+import { Toaster as Sonner } from "sonner";
 import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
 
 const Toaster = ({

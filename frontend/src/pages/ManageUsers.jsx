@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Search, Plus } from "lucide-react";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { toast, Toaster } from "sonner"; 
+import { toast, Toaster } from "sonner";
 import Navbar from "../components/common/Navbar";
 import UserTable from "../components/UserTable";
 import CreateUserDialog from "../components/CreateUserDialog";
@@ -35,19 +35,40 @@ export default function ManageUsers() {
   });
 
   useEffect(() => {
-    const loadUsers = async () => {
+    const verifyAndLoadUsers = async () => {
       try {
         setLoading(true);
+        
         const data = await getAllUsers();
         setUsers(data || []);
+        
       } catch (err) {
+        
+        console.error(err);
+
+        const errStatus = err.response?.status;
+
+        // userRole -> EMPLOYEE, then deny access
+        if (errStatus === 403 || errStatus === 401) {
+          localStorage.setItem("userRole", "EMPLOYEE");
+          toast.error("Access denied. Admin privileges have been revoked")
+          
+          // kick user out
+          setTimeout(() => {
+            window.location.href = "/user-dashboard";
+          }, 1500);
+          
+          return;
+        }
+
         toast.error("Error fetching users from server");
         console.error(err);
+        
       } finally {
         setLoading(false);
       }
     };
-    loadUsers();
+    verifyAndLoadUsers();
   }, []);
 
   const filteredUsers = users.filter((user) => {
@@ -117,7 +138,12 @@ export default function ManageUsers() {
       setSelectedUser(null);
       toast.success("User setting updated successfully");
     } catch (err) {
-      toast.error(err.response?.data || "Failed to submit user updates");
+      const backendData = err.response?.data;
+      const errorText =
+        typeof backendData === "string"
+          ? backendData
+          : backendData?.message || JSON.stringify(backendData) || "Failed to submit user updates";
+      toast.error(errorText);
     }
   };
 
@@ -222,7 +248,7 @@ export default function ManageUsers() {
         user={selectedUser}
       />
 
-      <Toaster richColors position="top-center" />
+      {/* <Toaster richColors position="top-center" /> */}
     </div>
   );
 }
