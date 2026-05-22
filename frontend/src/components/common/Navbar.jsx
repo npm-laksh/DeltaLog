@@ -14,7 +14,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "../ui/alert-dialog";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -161,7 +161,7 @@ export default function Navbar() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <Toaster />
+      {/* <Toaster /> */}
     </>
   );
 }

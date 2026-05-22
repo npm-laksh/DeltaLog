@@ -26,12 +26,13 @@ export default function LoginPage() {
       }
     } catch (err) {
       console.error("Login failed:", err.response?.data || err.message);
-      toast.error("Invalid email or password");
+      // const backendData = err.response?.data;
+      toast.error("Login failed, try again");
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="min-h-screen flex items-center justify-center bg-background text-foreground antialiased font-sans">
       <Card className="w-full max-w-sm shadow-lg">
         <CardHeader className="text-center space-y-1">
           <CardTitle className="text-2xl">Welcome to Delta Log</CardTitle>
