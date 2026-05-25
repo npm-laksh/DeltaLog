@@ -1,7 +1,6 @@
 package com.laksh.app.deltalog.service.impl;
 
-import com.laksh.app.deltalog.exception.ActiveSessionExists;
-import com.laksh.app.deltalog.exception.AlreadyCheckedOut;
+import com.laksh.app.deltalog.exception.*;
 import com.laksh.app.deltalog.mapper.AttendanceMapper;
 import com.laksh.app.deltalog.dto.request.CheckInRequestDTO;
 import com.laksh.app.deltalog.dto.request.CheckOutRequestDTO;
@@ -9,9 +8,8 @@ import com.laksh.app.deltalog.dto.response.AttendanceResponseDTO;
 import com.laksh.app.deltalog.entity.Attendance;
 import com.laksh.app.deltalog.entity.User;
 import com.laksh.app.deltalog.enums.AttendanceStatus;
-import com.laksh.app.deltalog.exception.UserFoundException;
-import com.laksh.app.deltalog.exception.UserNotFoundException;
 import com.laksh.app.deltalog.repository.AttendanceRepo;
+import com.laksh.app.deltalog.repository.TaskRepo;
 import com.laksh.app.deltalog.repository.UserRepo;
 import com.laksh.app.deltalog.service.AttendanceService;
 import jakarta.transaction.Transactional;
@@ -29,6 +27,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     private final AttendanceRepo attendanceRepo;
     private final AttendanceMapper attendanceMapper;
     private final UserRepo userRepo;
+    private final TaskRepo taskRepo;
 
     // check in using ID (decommissioned)
     @Transactional
@@ -152,6 +151,82 @@ public class AttendanceServiceImpl implements AttendanceService {
         return attendanceMapper.toAttendanceResponseDTO(attendanceRepo.save(attendance));
     }
 
+
+    // ** DEFAULT CHECKOUT (BY EMAIL) **
+//    @Override
+//    @Transactional
+//    public AttendanceResponseDTO checkOutByEmail(String email) {
+//    // 1. Find user by email
+//        User user = userRepo.findByEmail(email)
+//                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+//
+//    // 2. Find the active session for this user
+//        Attendance attendance = attendanceRepo.findByUserAndStatus(user, AttendanceStatus.ACTIVE)
+//                .orElseThrow(() -> new RuntimeException("No active work session found for this user."));
+//
+//    // 3. Close session and calculate metrics
+//        attendance.setCheckOutTime(LocalDateTime.now());
+//        attendance.setStatus(AttendanceStatus.COMPLETED);
+//        calculateMetric(attendance);
+//
+//        return attendanceMapper.toAttendanceResponseDTO(attendanceRepo.save(attendance));
+//    }
+
+
+//     *** CHECKOUT & CHECK TASK DURATION BEFORE CHECKOUT ***
+//    @Override
+//    @Transactional
+//    public AttendanceResponseDTO checkOutByEmail(String email) {
+//        // 1. Find user by email
+//        User user = userRepo.findByEmail(email)
+//                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+//
+//        // 2. Find the active session for this user
+//        Attendance attendance = attendanceRepo.findByUserAndStatus(user, AttendanceStatus.ACTIVE)
+//                .orElseThrow(() -> new RuntimeException("No active work session found for this user."));
+//
+//        // task duration enforcement logic:
+//        // user cannot checkout before task duration time
+//        // e.g if user checks in at 10 am
+//        // create task of duration 30 mins
+//        // user cannot checkout before 10.30 am
+//
+//        // today time boundaries (00:00:00 to 23:59:59
+//        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+//        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+//
+//        // sum of task min logged by user for today
+//        int totalTaskMins = taskRepo.sumDurationMinutesByUserIdAndDate(
+//                user.getId(),
+//                startOfDay,
+//                endOfDay
+//        );
+//
+//        // check minimum working threshold based on task duration logged
+//        LocalDateTime checkInTime = attendance.getCheckInTime();
+//        LocalDateTime earliesCheckoutTimeAllowed = attendance.getCheckInTime().plusMinutes(totalTaskMins);
+//        LocalDateTime currentTime = LocalDateTime.now();
+//
+//        if (currentTime.isBefore(earliesCheckoutTimeAllowed)) {
+//            long minRemainingBeforeCheckout = java.time.Duration.between(currentTime, earliesCheckoutTimeAllowed).toMinutes();
+//
+//            throw new MinsRemainingBeforeCheckout(
+//                    "Check out Denied. You have logged " +totalTaskMins+
+//                            " minutes of tasks today. You must remain in for at least " +minRemainingBeforeCheckout+
+//                            " more minutes to cover your logged work load (tasks)"
+//            );
+//
+//        }
+//
+//        // 3. Close session and calculate metrics
+//        attendance.setCheckOutTime(LocalDateTime.now());
+//        attendance.setStatus(AttendanceStatus.COMPLETED);
+//        calculateMetric(attendance);
+//
+//        return attendanceMapper.toAttendanceResponseDTO(attendanceRepo.save(attendance));
+//    }
+
+
     @Override
     @Transactional
     public AttendanceResponseDTO checkOutByEmail(String email) {
@@ -163,14 +238,31 @@ public class AttendanceServiceImpl implements AttendanceService {
         Attendance attendance = attendanceRepo.findByUserAndStatus(user, AttendanceStatus.ACTIVE)
                 .orElseThrow(() -> new RuntimeException("No active work session found for this user."));
 
-        // 3. Close session and calculate metrics
-        attendance.setCheckOutTime(LocalDateTime.now());
+        // 3. FIXED: Fetch task total directly using the unique active Attendance ID
+        int totalTaskMinutes = taskRepo.sumDurationMinutesByAttendanceId(attendance.getId());
+
+        // 4. Enforce minimum working threshold based on tasks logged
+        LocalDateTime checkInTime = attendance.getCheckInTime();
+        LocalDateTime earliestAllowedCheckout = checkInTime.plusMinutes(totalTaskMinutes);
+        LocalDateTime currentTime = LocalDateTime.now();
+
+        if (currentTime.isBefore(earliestAllowedCheckout)) {
+            long minutesRemaining = java.time.Duration.between(currentTime, earliestAllowedCheckout).toMinutes();
+
+            throw new IllegalStateException(
+                    "Checkout Denied: You have logged " + totalTaskMinutes +
+                            " minutes of tasks during this shift. You must remain checked in for at least " +
+                            minutesRemaining + " more minutes to cover your logged workload."
+            );
+        }
+
+        // 5. Close session and calculate metrics
+        attendance.setCheckOutTime(currentTime);
         attendance.setStatus(AttendanceStatus.COMPLETED);
         calculateMetric(attendance);
 
         return attendanceMapper.toAttendanceResponseDTO(attendanceRepo.save(attendance));
     }
-
 
     // get latest attendace record for logged in user
     @Override

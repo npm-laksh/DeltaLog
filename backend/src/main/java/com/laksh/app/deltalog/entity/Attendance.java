@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 // to uncomment later
 //@Entity
@@ -42,4 +43,7 @@ public class Attendance {
 
     private int overtime;
     private int undertime;
+
+    @OneToMany(mappedBy = "attendance", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Task> tasks;
 }

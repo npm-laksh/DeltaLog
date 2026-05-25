@@ -21,8 +21,17 @@ export default function LoginPage() {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("userRole", response.data.role);
         localStorage.setItem("username", response.data.username);
-        
-        navigate("/user-dashboard");
+
+        toast.success(`Welcome back, ${response.data.username}`);
+        let role = response.data.role;
+
+        // manage user redirection upon logging (based on role)
+        if (role === "ADMIN") {
+          navigate("/manage-user");
+        } else {
+          navigate("/user-dashboard");
+        }
+        // navigate("/user-dashboard");
       }
     } catch (err) {
       console.error("Login failed:", err.response?.data || err.message);
