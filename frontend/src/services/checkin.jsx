@@ -25,6 +25,7 @@ export const checkin = async () => {
 
     } catch (err) {
         console.error("Check in API failed: ", err.response?.data || err.message);
+        throw err;
     } 
 }
 
@@ -42,6 +43,7 @@ export const checkout = async () => {
 
     } catch (err) {
         console.error("Check in API failed: ", err.response?.data || err.message);
+        throw err;
     } 
 }
 

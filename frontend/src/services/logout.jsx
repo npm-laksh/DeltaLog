@@ -13,6 +13,8 @@ export const handleLogOut = async () => {
         }
     } catch (err) {
         console.error("Logout API failed: ", err.response?.data || err.message);
+        throw err;
+        
     } finally {
         // clear storage
         localStorage.clear();

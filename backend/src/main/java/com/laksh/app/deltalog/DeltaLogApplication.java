@@ -1,25 +1,45 @@
 package com.laksh.app.deltalog;
 
-import com.laksh.app.deltalog.entity.User;
-import com.laksh.app.deltalog.repository.UserRepo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Properties;
 
 @SpringBootApplication
 public class DeltaLogApplication {
 
     public static void main(String[] args) {
-        ApplicationContext context = SpringApplication.run(DeltaLogApplication.class, args);
-        System.out.println("Hello World");
 
-//        UserRepo userRepo = context.getBean(UserRepo.class);
-//        User u1 = new User();
-//        u1.setUsername("Laksh");
-//        u1.setId(101);
-//        u1.setEmail("laksh@email.com");
-//
-//        userRepo.save(u1);
+        // env & application properties
+
+        String userDir = System.getProperty("user.dir");
+        Path envPath = Paths.get(userDir).getParent().resolve("infra").resolve(".env");
+
+        if (!Files.exists(envPath)) {
+            envPath = Paths.get(userDir).resolve("infra").resolve(".env");
+        }
+
+        Properties envProps = new Properties();
+
+        if (Files.exists(envPath)) {
+            try (FileInputStream fileInputStream = new FileInputStream(envPath.toFile())) {
+                envProps.load(fileInputStream);
+            } catch (IOException e) {
+                System.err.println("Failed to read infrastructure configuration properties: " + e.getMessage());
+            }
+        }
+
+        SpringApplication app = new SpringApplication(DeltaLogApplication.class);
+
+        if (!envProps.isEmpty()) {
+            app.setDefaultProperties(envProps);
+        }
+
+        app.run(args);
     }
-
 }

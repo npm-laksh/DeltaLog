@@ -59,11 +59,10 @@ export default function Navbar() {
   }, []);
 
   const getButtonText = () => {
-  if (isWorking) return "Check Out";
-  if (isCompleted) return "Shift Completed";
-  return "Check In";
-};
-
+    if (isWorking) return "Check Out";
+    if (isCompleted) return "Shift Completed";
+    return "Check In";
+  };
 
   // logic to decide whether to check-in immediately or show the popup
   const handleMainButtonClick = () => {
@@ -82,6 +81,7 @@ export default function Navbar() {
       if (!isWorking) {
         await checkin();
         setIsWorking(true);
+        toast.success("Successfully Checked in! Timer starts now");
       } else {
         await checkout();
         setIsWorking(false);
@@ -90,10 +90,56 @@ export default function Navbar() {
       }
       // update dashboard
       window.location.reload();
+
     } catch (error) {
-      console.error("Attendance action failed", error);
-      const msg = "Attendance update denied";
-      toast.error(msg);
+      console.error("Attendance action failed:", error);
+
+      const backendData = error.response?.data;
+
+      let toastMessage = "Could not process attendance status action.";
+
+      if (backendData) {
+        if (typeof backendData === "string") {
+          toastMessage = backendData;
+        } else if (backendData.message) {
+          toastMessage = backendData.message;
+        } else if (backendData.error) {
+          toastMessage = backendData.error;
+        }
+      }
+
+      toast.error(toastMessage);
+
+      setIsConfirm(false);
+    }
+  };
+
+  const handleLogOutClick = async () => {
+    try {
+      if (isWorking) {
+        await checkout(); 
+      }
+  
+      await handleLogOut();
+      localStorage.clear();
+      toast.success("Successfully logged out. See you tomorrow!");
+      window.location.href = "/login";
+
+    } catch (error) {
+      console.error("UI Layer Logout Blocked:", error);
+
+      const backendMsg = error.response?.data;
+      let restrictionMessage = "Logout aborted. Could not securely close your shift.";
+
+      if (backendMsg) {
+        if (typeof backendMsg === "string") {
+          restrictionMessage = backendMsg;
+        } else if (backendMsg.message) {
+          restrictionMessage = backendMsg.message; 
+        }
+      }
+
+      toast.error(restrictionMessage);
     }
   };
 
@@ -132,7 +178,7 @@ export default function Navbar() {
 
             <Button
               variant="outline"
-              onClick={handleLogOut}
+              onClick={handleLogOutClick}
               className="h-9 rounded-full px-5 text-sm"
             >
               Log out
