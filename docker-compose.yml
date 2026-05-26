@@ -12,8 +12,7 @@ services:
       - POSTGRES_DB=deltalog
       # - POSTGRES_USER=${DB_USERNAME:-postgres}      
       - POSTGRES_USER=${DB_USERNAME:-postgres}      
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-Whiteriver2026$}  
-      # - POSTGRES_PASSWORD=${DB_PASSWORD}  
+      - POSTGRES_PASSWORD=${DB_PASSWORD}  
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres", "-d", "deltalog"]
       interval: 3s
