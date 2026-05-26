@@ -1,0 +1,64 @@
+services:
+  # --- 1. POSTGRESQL DATABASE ---
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: deltalog-postgres
+    ports:
+      - "5433:5432"
+    # look inside backend/infra for the hidden file
+    env_file:
+      - backend/infra/.env
+    environment:
+      - POSTGRES_DB=deltalog
+      # - POSTGRES_USER=${DB_USERNAME:-postgres}      
+      - POSTGRES_USER=${DB_USERNAME:-postgres}      
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-Whiteriver2026$}  
+      # - POSTGRES_PASSWORD=${DB_PASSWORD}  
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "deltalog"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+    networks:
+      - deltalog-net
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # --- 2. SPRING BOOT BACKEND ---
+  backend-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: deltalog-backend
+    ports:
+      - "9090:8080"
+    env_file:
+      - backend/infra/.env
+    environment:
+      # - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/deltalog
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/deltalog
+    networks:
+      - deltalog-net
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+
+  # --- 3. VITE/REACT FRONTEND ---
+  frontend-ui:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: deltalog-frontend
+    ports:
+      - "80:80"
+    networks:
+      - deltalog-net
+    depends_on:
+      - backend-api
+
+networks:
+  deltalog-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
