@@ -64,8 +64,6 @@ SERVER_ADDRESS=0.0.0.0
 SPRING_PROFILES_ACTIVE=default
 ```
 
---
-
 ## Launching the Application
 
 The entire multi-container stack can be managed using standard Docker Compose life-cycle commands.
@@ -83,7 +81,7 @@ Execute all terminal actions from the project's root folder where the `docker-co
 4. Hard Structural Factory Reset
    If you modify database structural keys or need to wipe the relational cache storage completely to start from scratch: docker compose down -v
 
---
+## Network Exposure Access Points
+Once Docker reports that all healthy checks have successfully resolved, the platform layers are available globally across your web browsers.
 
--> Network Exposure Access Points
-Once Docker reports that all healthy checks have successfully resolved, the platform layers are available globally across your web browsers:
+## Congrats you are now running Delta Log on your machine!
