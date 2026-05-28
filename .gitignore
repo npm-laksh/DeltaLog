@@ -16,3 +16,6 @@ frontend/.env
 
 # Logs
 *.log
+
+# Ignore the root environment symlink file
+.env

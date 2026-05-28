@@ -10,9 +10,8 @@ services:
       - backend/infra/.env
     environment:
       - POSTGRES_DB=deltalog
-      # - POSTGRES_USER=${DB_USERNAME:-postgres}      
-      - POSTGRES_USER=${DB_USERNAME:-postgres}      
-      - POSTGRES_PASSWORD=${DB_PASSWORD}  
+      - POSTGRES_USER=${POSTGRES_USER}   
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}   
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres", "-d", "deltalog"]
       interval: 3s
