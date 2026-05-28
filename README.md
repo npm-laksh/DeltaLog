@@ -70,16 +70,22 @@ The entire multi-container stack can be managed using standard Docker Compose li
 Execute all terminal actions from the project's root folder where the `docker-compose.yml` file lives.
 
 1. Initial Setup and Bootstrapping
-   To compile the source code, download dependency binaries, build image layers, and link data volumes for the first time: docker compose up --build
+   To compile the source code, download dependency binaries, build image layers, and link data volumes for the first time: 
+   
+   **`docker compose up --build`**
 
 2. Standard Background Boot
    To start your application services silently in detached background daemon mode: docker compose up -d
 
 3. Graceful Tear-down
-   To stop execution processes safely and close virtual container interfaces without breaking database storage state pools: docker compose down
+   To stop execution processes safely and close virtual container interfaces without breaking database storage state pools: 
+   
+   **`docker compose down`**
 
 4. Hard Structural Factory Reset
-   If you modify database structural keys or need to wipe the relational cache storage completely to start from scratch: docker compose down -v
+   If you modify database structural keys or need to wipe the relational cache storage completely to start from scratch: 
+   
+   **`docker compose down -v`**
 
 ## Network Exposure Access Points
 Once Docker reports that all healthy checks have successfully resolved, the platform layers are available globally across your web browsers.
