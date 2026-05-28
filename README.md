@@ -84,4 +84,4 @@ Execute all terminal actions from the project's root folder where the `docker-co
 ## Network Exposure Access Points
 Once Docker reports that all healthy checks have successfully resolved, the platform layers are available globally across your web browsers.
 
-## Congrats you are now running Delta Log on your machine!
+**Congrats you are now running Delta Log on your machine!**
