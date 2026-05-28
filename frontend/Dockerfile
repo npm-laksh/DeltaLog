@@ -14,7 +14,6 @@ FROM nginx:stable-alpine
 # Copy the static build assets from Stage 1
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# 🆕 Copy our custom Nginx fallback routing rules into the container configuration folder
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
