@@ -75,7 +75,9 @@ Execute all terminal actions from the project's root folder where the `docker-co
    **`docker compose up --build`**
 
 2. Standard Background Boot
-   To start your application services silently in detached background daemon mode: docker compose up -d
+   To start your application services silently in detached background daemon mode: 
+   
+   **`docker compose up -d`**
 
 3. Graceful Tear-down
    To stop execution processes safely and close virtual container interfaces without breaking database storage state pools: 
