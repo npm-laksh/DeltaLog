@@ -89,9 +89,13 @@ Execute all terminal actions from the project's root folder where the `docker-co
    
    **`docker compose down -v`**
 
-5. Access postgres db via docker
-   To view db data (docker)
+5. Access postgres db (via terminal)
    **`docker exec -it deltalog-postgres psql -U postgres -d deltalog`**
+
+   To view db data (docker): **`\dt`**
+   
+   <img width="1470" height="510" alt="image" src="https://github.com/user-attachments/assets/6e7969cc-d0ca-47b0-bfe0-f4d7ed98fc96" />
+   
 
 ## Default admin access (login)
 **email: admin@deltalog.com**
@@ -99,5 +103,7 @@ Execute all terminal actions from the project's root folder where the `docker-co
 
 ## Network Exposure Access Points
 Once Docker reports that all healthy checks have successfully resolved, the platform layers are available globally across your web browsers.
+Go to `localhost` or `localhost:80`
+
 
 **Congrats you are now running Delta Log on your machine!**
