@@ -1,0 +1,9 @@
+-- Deprecated placeholder migration. The actual default admin seed is handled by the repeatable migration file
+-- R__seed_admin_user.sql so that it can be re-applied safely when code changes.
+-- INSERT INTO users (username, email, password, role)
+-- VALUES (
+--     'admin', -- admin username
+--     'admin@deltalog.com', -- admin email for login
+--     '$2a$10$JAPMHIeiKd/x2MYaw2rkjeIojsDdOwxU1q17LR8k3F6xalxP0WoE2', -- Hashed value for '123456'
+--     'ADMIN' -- admin role
+-- );
