@@ -93,6 +93,10 @@ Execute all terminal actions from the project's root folder where the `docker-co
    To view db data (docker)
    **`docker exec -it deltalog-postgres psql -U postgres -d deltalog`**
 
+## Default admin access (login)
+**email: admin@deltalog.com**
+**password: 123456**
+
 ## Network Exposure Access Points
 Once Docker reports that all healthy checks have successfully resolved, the platform layers are available globally across your web browsers.
 
