@@ -89,6 +89,10 @@ Execute all terminal actions from the project's root folder where the `docker-co
    
    **`docker compose down -v`**
 
+5. Access postgres db via docker
+   To view db data (docker)
+   **`docker exec -it deltalog-postgres psql -U postgres -d deltalog`**
+
 ## Network Exposure Access Points
 Once Docker reports that all healthy checks have successfully resolved, the platform layers are available globally across your web browsers.
 
