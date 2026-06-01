@@ -1,6 +1,11 @@
 # 🔺 DeltaLog
 
-DeltaLog is a full-stack enterprise resource and log management application.
+DeltaLog is a web application based on Employee Time & Task Tracking System designed to help organizations to monitor employee attendance, daily tasks & working hours.
+
+The application allows employees to login to the platform, check in at the start of the day, efficiently take note of all the tasks assigned to them during a work day and tasks they plan to complete, and check out at the end of the day.
+
+The application automatically tracks the tasks carried out by the user and total working time, overtime & undertime between check in and check out.
+
 Built as a containerized, decoupled architecture, it leverages a high-performance **React Vite** frontend, a secure **Spring Boot** REST API backend, and a transactional **PostgreSQL** relational database.
 
 The entire ecosystem is orchestrated using Docker and Docker Compose to guarantee environmental consistency between development, testing, and production states.
